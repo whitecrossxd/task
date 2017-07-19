@@ -1,0 +1,204 @@
+<html>	
+	<head>
+		<link rel="stylesheet" type="text/css" href="css/main.css">
+		<script type="text/javascript" src="js/lib/three.js"></script>
+		<script type="text/javascript" src="js/lib/OrbitControls.js"></script>
+		<script type="text/javascript" src="js/lib/jquery.js"></script>
+		<!-- <script type="text/javascript" src="js/main.js"></script> -->
+	</head>
+	<body>
+		<div class="sidebar" >
+			<div class="geometryMenu">
+				<p>Choose a type of a 3D object</p>
+				<input type="button" name="geometry" value="Box">
+				<input type="button" name="geometry" value="Cylinder">
+				<input type="button" name="geometry" value="Sphere">
+			</div>
+			<div class="geometryChoose">
+				<div class="boxSettings hidden">
+					<p>Properties of the Box</p>
+					<div>Box Length:</div>
+					<input type="text" name="length" placeholder="Length">
+					<div>Box Width:</div>
+					<input type="text" name="width" placeholder="Width">
+					<div>Box Height:</div>
+					<input type="text" name="height" placeholder="Height">
+					<input type="button" name="ShowBox" value="Show it!">
+				</div>
+				<div class="cylinderSettings hidden">
+					<p>Properties of the Cylinder</p>
+					<div>Cylinder Radius:</div>
+					<input type="text" name="TopRadius" placeholder="Top Radius">
+					<div>Cylinder Height:</div>
+					<input type="text" name="Height" placeholder="Height">
+					<input type="button" name="ShowCylinder" value="Show it!">
+				</div>
+				<div class="sphereSettings hidden">
+					<p>Properties of the Sphere</p>
+					<div>Sphere Radius</div>
+					<input type="text" name="Radius" placeholder="Radius">
+					<input type="button" name="ShowSphere" value="Show it!">
+					
+				</div>
+			</div>
+		</div>
+		<div class="geometryParam">
+			<p id="objectChosen"></p>
+			<p id="surfaceArea"></p>
+			<p id="volume"></p>
+		</div>
+		<div class="instruction">
+			<h2>Instruction</h2>
+			<p>1)Grab with the left mouse button and move to rotate</p>
+			<p>2)Rotate the mouse wheel to zoom</p>
+			<p>3)Grab with the right mouse button to move object</p>
+		</div>
+
+		<script type="text/javascript"> // jQuery.js script
+
+			$('input[name=geometry]').click(function(){
+				$('#surfaceArea').html('Surface Area: ');
+				$('#volume').html('Volume: ');
+				$(this).parent().parent().find(".active").removeClass("active").slideToggle();
+				$('input[name=length], input[name=width], input[name=height], input[name=TopRadius], input[name=Height], input[name=Radius]').val("");
+				var inputName = $(this).attr("value");
+				$("." + inputName + "Settings").slideToggle().addClass("active");
+				$('#objectChosen').html(inputName);
+			});
+
+			$('input[name=ShowBox]').click(function(){
+				scene.remove(scene.children[0]);
+				var length = $("input[name=length]").val(),
+					width = $("input[name=width]").val(),
+					height = $("input[name=height]").val()
+
+					if (length == "" || width == "" || height == "") {
+						$(".boxSettings").append("<p class='error'>Complete all properties!</p>");
+					}else{
+						$('.error').remove("p");
+						var surfaceArea = (length*width + width*height + height*length)*2,
+							volume      = (length*width*height)
+						$('#surfaceArea').html('Surface Area: ' + surfaceArea);
+						$('#volume').html('Volume: ' + volume);
+						Box(length, width, height);
+					}
+			});
+
+			$('input[name=ShowCylinder]').click(function(){
+				scene.remove(scene.children[0]);
+				var radius = $("input[name=TopRadius]").val(),
+					height = $("input[name=Height]").val()
+
+					if (radius == "" || height == "") {
+						$(".cylinderSettings").append("<p class='error'>Complete all properties!</p>")
+					}else{
+						$('.error').remove("p");
+						var surfaceArea = 2*Math.PI*radius + (radius + height),
+							volume      = Math.PI*Math.pow(radius,2)*radius
+						$('#surfaceArea').html('Surface Area: ' + surfaceArea);
+						$('#volume').html('Volume: ' + volume);
+						cylinder(radius, height);
+					};
+			});
+
+			$('input[name=ShowSphere]').click(function(){
+				scene.remove(scene.children[0]);
+				var radius = $("input[name=Radius]").val();
+				if (radius == "") {
+						$(".sphereSettings").append("<p class='error'>Complete all properties!</p>")
+					}else{
+						$('.error').remove("p");
+						var surfaceArea = 4*Math.PI*Math.pow(radius,2),
+							volume      = 4/3*Math.PI*Math.pow(radius,3)
+						$('#surfaceArea').html('Surface Area: ' + surfaceArea);
+						$('#volume').html('Volume: ' + volume);
+						Sphere(radius);
+					}
+			});
+
+		</script>
+
+
+
+		<script type="text/javascript">	
+			var width = window.innerWidth - 400,
+				height = window.innerHeight,
+				camera,
+				scene,
+				renderer,
+				controls;
+
+			window.addEventListener( 'resize', onWindowResize, false );
+
+			function onWindowResize(){
+				var width = window.innerWidth - 400,
+					height = window.innerHeight;
+			    camera.aspect = width / height;
+			    camera.updateProjectionMatrix();
+
+			    renderer.setSize( width, height );
+
+			}
+
+
+			// THREE.js script
+			
+				camera = new THREE.PerspectiveCamera( 75, width/height, 0.1, 5000 )
+				camera.position.z = 100;
+				renderer = new THREE.WebGLRenderer();
+				renderer.setSize( width, height );
+				document.body.appendChild( renderer.domElement );
+
+
+				
+
+				scene = new THREE.Scene();
+				scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
+
+				controls = new THREE.OrbitControls( camera, renderer.domElement );
+				console.log(controls)
+				//console.log(renderer.domElement)
+				controls.enableZoom = true;
+				controls.addEventListener( 'change', render );
+				
+			var frameUpdate = function () {
+				requestAnimationFrame( frameUpdate );
+				render();
+				// controls.update();
+			};
+			var render = function () {
+				renderer.render(scene, camera);
+			}
+			frameUpdate();
+
+
+			
+
+			function Box (L, W, H){
+
+				var geometry = new THREE.BoxGeometry( L, W, H );
+				var material = new THREE.MeshNormalMaterial(  );
+				var cube = new THREE.Mesh( geometry, material );
+				scene.add( cube );
+			};
+
+
+			function cylinder (radius, H){
+
+				var geometry = new THREE.CylinderGeometry( radius, radius, H, 12, 10 );
+				var material = new THREE.MeshNormalMaterial( {wireframe: true} );
+				var cylinder = new THREE.Mesh( geometry, material );
+				scene.add( cylinder );
+			};
+
+
+			function Sphere (radius){
+
+				var geometry = new THREE.SphereGeometry( radius , 15, 15 );
+				var material = new THREE.MeshNormalMaterial( {wireframe: true} );
+				var sphere = new THREE.Mesh( geometry, material );
+				scene.add( sphere );
+			};
+		</script>
+	</body>
+</html>

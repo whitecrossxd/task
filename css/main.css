@@ -1,0 +1,85 @@
+body{
+	margin: 0;
+	overflow: hidden;
+}
+
+input[type=button] {
+	width: 100px;
+    border: none;
+    background: mediumslateblue;
+    height: 35px;
+    border-radius: 3px;
+    transition: 0.4s;
+    margin-top: 10px;
+}
+
+input[type=text] {
+	margin: 7px 20px 0px 10px;
+    width: 90%;
+    display: block;
+}
+
+input[type=button]:hover {
+    background: purple;
+    color: white;
+    box-shadow: 0 6px 10px 0 rgba(0,0,0,0.14), 0 1px 18px 0 rgba(0,0,0,0.12), 0 3px 5px -1px rgba(0,0,0,0.3);
+    cursor: pointer;
+}
+
+
+
+.hidden {
+	display: none;
+}
+
+.sidebar {
+	float: left;
+	background: #D3D3D3;
+	height: 100%;
+	width: 400px;
+	z-index: 9999;
+}
+
+.geometryMenu, .geometryChoose, .boxSettings, .cylinderSettings .sphereSettings{
+	width: 100%;
+	text-align: center;
+}
+
+.geometryMenu p, .boxSettings p, .cylinderSettings p, .sphereSettings p {
+    font-size: 31px;
+}
+
+.geometryMenu div, .boxSettings div, .cylinderSettings div, .sphereSettings div{
+	text-align: left;
+    margin: 10px 15px;
+    font-size: 20px;
+}
+
+.geometryParam{
+	position: absolute;
+	right: 0;
+	top: 0;
+	height: 100px;
+	width: 200px;
+	max-width: 500px;
+	background: transparent;
+	color: white;
+	text-align: center;
+}
+
+.instruction{
+	position: absolute;
+	bottom: 25px;
+	right: 10px;
+	color: white;
+	width: inherit;
+}
+.instruction h2{
+	text-align: center;
+	font-size: 31px;
+}
+.instruction p{
+	text-align: left;
+    margin: 10px 15px;
+    font-size: 20px;
+}
