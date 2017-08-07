@@ -56,14 +56,49 @@
 
 		<script type="text/javascript"> // jQuery.js script
 
+		let figure = {
+
+		};
+
+		function prepareParams (){
+			let requestParams = JSON.stringify(figure);
+			console.log(requestParams);
+			return requestParams;
+		};
+
+		function request () {
+
+		    var xhttp = new XMLHttpRequest();
+
+		    xhttp.onreadystatechange = function() {
+		        if (this.readyState == 4 && this.status == 200) {
+		        	//console.log(this);
+		        	let resultText = JSON.parse(this.responseText);
+		        	$('#surfaceArea').html('Surface Area: ' + resultText.area);
+					$('#volume').html('Volume: ' + resultText.volume);
+		            // resultText.innerHTML = produceResultString(this.responseText);
+		        }
+		    };
+		    xhttp.open("GET", "/calc?figure="+prepareParams(), true);
+		    xhttp.send();
+		};
+
+
+
+
+
+
 			$('input[name=geometry]').click(function(){
 				$('#surfaceArea').html('Surface Area: ');
 				$('#volume').html('Volume: ');
 				$(this).parent().parent().find(".active").removeClass("active").slideToggle();
 				$('input[name=length], input[name=width], input[name=height], input[name=TopRadius], input[name=Height], input[name=Radius]').val("");
 				var inputName = $(this).attr("value");
+					figure.name = inputName;
 				$("." + inputName + "Settings").slideToggle().addClass("active");
 				$('#objectChosen').html(inputName);
+				$('#surfaceArea').html('Surface Area: ');
+				$('#volume').html('Volume: ');
 			});
 
 			$('input[name=ShowBox]').click(function(){
@@ -72,15 +107,21 @@
 					width = $("input[name=width]").val(),
 					height = $("input[name=height]").val()
 
+
 					if (length == "" || width == "" || height == "") {
 						$(".boxSettings").append("<p class='error'>Complete all properties!</p>");
 					}else{
 						$('.error').remove("p");
-						var surfaceArea = (length*width + width*height + height*length)*2,
-							volume      = (length*width*height)
-						$('#surfaceArea').html('Surface Area: ' + surfaceArea);
-						$('#volume').html('Volume: ' + volume);
+						figure.length = length;
+						figure.width = width;
+						figure.height = height;
+						console.log(figure);
+						// var surfaceArea = (length*width + width*height + height*length)*2,
+						// 	volume      = (length*width*height)
+						
 						Box(length, width, height);
+						prepareParams();
+						request();
 					}
 			});
 
@@ -93,11 +134,11 @@
 						$(".cylinderSettings").append("<p class='error'>Complete all properties!</p>")
 					}else{
 						$('.error').remove("p");
-						var surfaceArea = 2*Math.PI*radius + (radius + height),
-							volume      = Math.PI*Math.pow(radius,2)*radius
-						$('#surfaceArea').html('Surface Area: ' + surfaceArea);
-						$('#volume').html('Volume: ' + volume);
+						figure.radius = radius;
+						figure.height = height;
 						cylinder(radius, height);
+						prepareParams();
+						request();
 					};
 			});
 
@@ -108,11 +149,10 @@
 						$(".sphereSettings").append("<p class='error'>Complete all properties!</p>")
 					}else{
 						$('.error').remove("p");
-						var surfaceArea = 4*Math.PI*Math.pow(radius,2),
-							volume      = 4/3*Math.PI*Math.pow(radius,3)
-						$('#surfaceArea').html('Surface Area: ' + surfaceArea);
-						$('#volume').html('Volume: ' + volume);
+						figure.radius = radius;
 						Sphere(radius);
+						prepareParams();
+						request();
 					}
 			});
 
@@ -199,6 +239,10 @@
 				var sphere = new THREE.Mesh( geometry, material );
 				scene.add( sphere );
 			};
+		</script>
+
+		<script type="text/javascript">
+			
 		</script>
 	</body>
 </html>
